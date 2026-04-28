@@ -1,0 +1,9 @@
+build/
+riscv_sim
+ooo_sim
+riscv_full
+hci_smoke
+*.o
+*.d
+*.ooo.o
+*.full.o

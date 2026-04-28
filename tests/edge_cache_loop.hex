@@ -1,0 +1,5 @@
+# Loop repeatedly fetches same instructions, producing icache hits in ooo_sim.
+00300093
+fff08093
+fe009ee3
+00000073
