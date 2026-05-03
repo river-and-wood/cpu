@@ -1,0 +1,8 @@
+# WAR: older add captures x1 before younger addi overwrites x1.
+# 每行格式：机器码  # PC: 原始指令
+00500093  # 0x00000000: addi x1,x0,5
+00300113  # 0x00000004: addi x2,x0,3
+00208233  # 0x00000008: add x4,x1,x2
+00900093  # 0x0000000c: addi x1,x0,9
+001202b3  # 0x00000010: add x5,x4,x1
+00000073  # 0x00000014: ecall

@@ -1,0 +1,10 @@
+# Long MUL and independent ADD execute through separate ALU paths.
+# 每行格式：机器码  # PC: 原始指令
+00600093  # 0x00000000: addi x1,x0,6
+00700113  # 0x00000004: addi x2,x0,7
+00100293  # 0x00000008: addi x5,x0,1
+00200313  # 0x0000000c: addi x6,x0,2
+022081b3  # 0x00000010: mul x3,x1,x2
+00628233  # 0x00000014: add x4,x5,x6
+004183b3  # 0x00000018: add x7,x3,x4
+00000073  # 0x0000001c: ecall

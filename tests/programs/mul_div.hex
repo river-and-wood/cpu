@@ -1,0 +1,7 @@
+# M extension paths implemented by the project experiment.
+# 每行格式：机器码  # PC: 原始指令
+00600093  # 0x00000000: addi x1,x0,6
+02a00113  # 0x00000004: addi x2,x0,42
+022081b3  # 0x00000008: mul x3,x1,x2
+02114233  # 0x0000000c: div x4,x2,x1
+00000073  # 0x00000010: ecall

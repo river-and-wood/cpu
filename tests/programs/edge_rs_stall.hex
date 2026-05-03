@@ -1,0 +1,15 @@
+# More independent ALU ops than ALU RS capacity; allocator must stall and retry.
+# 每行格式：机器码  # PC: 原始指令
+00100093  # 0x00000000: addi x1,x0,1
+00200113  # 0x00000004: addi x2,x0,2
+00300193  # 0x00000008: addi x3,x0,3
+00400213  # 0x0000000c: addi x4,x0,4
+00500293  # 0x00000010: addi x5,x0,5
+00600313  # 0x00000014: addi x6,x0,6
+00700393  # 0x00000018: addi x7,x0,7
+00800413  # 0x0000001c: addi x8,x0,8
+00900493  # 0x00000020: addi x9,x0,9
+00a00513  # 0x00000024: addi x10,x0,10
+00b00593  # 0x00000028: addi x11,x0,11
+00c00613  # 0x0000002c: addi x12,x0,12
+00000073  # 0x00000030: ecall

@@ -1,0 +1,6 @@
+# Loop repeatedly fetches same instructions, producing icache hits in ooo_sim.
+# 每行格式：机器码  # PC: 原始指令
+00300093  # 0x00000000: addi x1,x0,3
+fff08093  # 0x00000004: addi x1,x1,-1
+fe009ee3  # 0x00000008: bne x1,x0,-4  # -> 0x00000004
+00000073  # 0x0000000c: ecall

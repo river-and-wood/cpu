@@ -1,0 +1,14 @@
+# Negative arithmetic, signed/unsigned compare, arithmetic shift, DIV edge cases.
+# 每行格式：机器码  # PC: 原始指令
+fff00093  # 0x00000000: addi x1,x0,-1
+00100113  # 0x00000004: addi x2,x0,1
+0020a1b3  # 0x00000008: slt x3,x1,x2
+0020b233  # 0x0000000c: sltu x4,x1,x2
+4020d2b3  # 0x00000010: sra x5,x1,x2
+0010d313  # 0x00000014: srli x6,x1,1
+0220c3b3  # 0x00000018: div x7,x1,x2
+02014433  # 0x0000001c: div x8,x2,x0
+800004b7  # 0x00000020: lui x9,0x80000
+fff00513  # 0x00000024: addi x10,x0,-1
+02a4c5b3  # 0x00000028: div x11,x9,x10
+00000073  # 0x0000002c: ecall

@@ -1,0 +1,6 @@
+# RAW chain: x2 waits for x1, x3 waits for x2.
+# 每行格式：机器码  # PC: 原始指令
+00500093  # 0x00000000: addi x1,x0,5
+00108133  # 0x00000004: add x2,x1,x1
+001101b3  # 0x00000008: add x3,x2,x1
+00000073  # 0x0000000c: ecall

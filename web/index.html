@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OoO CPU Trace Viewer</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <h1>OoO CPU Trace Viewer</h1>
+      <p>基于 <code>ooo_sim --trace-json --stats-json</code> 的乱序执行流程可视化</p>
+    </div>
+    <div class="controls" aria-label="trace controls">
+      <label>
+        <span>示例</span>
+        <select id="presetSelect"></select>
+      </label>
+      <button id="loadPresetBtn" type="button">载入</button>
+      <button id="prevBtn" type="button" title="上一周期">◀</button>
+      <button id="playBtn" type="button" title="播放/暂停">▶</button>
+      <button id="nextBtn" type="button" title="下一周期">▶</button>
+      <label>
+        <span>周期</span>
+        <input id="cycleSlider" type="range" min="0" max="0" value="0">
+      </label>
+      <output id="cycleLabel">cycle 0</output>
+    </div>
+  </header>
+
+  <main>
+    <section class="loader">
+      <div class="load-card">
+        <div class="load-title">导入 trace</div>
+        <div class="load-actions">
+          <input id="traceFile" type="file" accept=".jsonl,.json,.txt">
+          <button id="pasteLoadBtn" type="button">解析粘贴内容</button>
+          <button id="clearPasteBtn" type="button">清空</button>
+        </div>
+        <textarea id="traceInput" spellcheck="false" placeholder='粘贴命令输出，例如：./ooo_sim tests/programs/branch_all.hex --trace-json --stats-json --max-cycles 80'></textarea>
+      </div>
+    </section>
+
+    <section class="stats" id="statsGrid" aria-label="run stats"></section>
+
+    <section class="story">
+      <div class="story-main">
+        <div class="eyebrow">当前周期</div>
+        <h2 id="storyTitle">等待载入 trace</h2>
+        <p id="storyText">选择示例后，这里会用一句话解释本周期正在发生什么。</p>
+      </div>
+      <div class="story-side" id="storyFacts"></div>
+    </section>
+
+    <section class="cycle-strip" aria-label="cycle overview">
+      <div class="strip-head">
+        <div>
+          <h2>周期概览</h2>
+          <p id="currentSummary">等待载入 trace</p>
+        </div>
+        <div class="legend">
+          <span><i class="dot alloc"></i>分配</span>
+          <span><i class="dot issue"></i>发射</span>
+          <span><i class="dot wb"></i>写回</span>
+          <span><i class="dot commit"></i>提交</span>
+          <span><i class="dot flush"></i>Flush</span>
+        </div>
+      </div>
+      <div id="cycleRail" class="cycle-rail"></div>
+    </section>
+
+    <section class="component-panel">
+      <div class="strip-head">
+        <div>
+          <h2>功能部件流程</h2>
+          <p>指令卡片会出现在当前所在的硬件部件中，突出乱序执行的数据流。</p>
+        </div>
+      </div>
+      <div id="componentFlow" class="component-flow"></div>
+    </section>
+
+    <section class="program-panel">
+      <div class="strip-head">
+        <div>
+          <h2>程序指令状态</h2>
+          <p>每行是一条进入 ROB 的指令；高亮行表示本周期有动作。</p>
+        </div>
+      </div>
+      <div id="programTable" class="program-table"></div>
+    </section>
+
+    <section class="flow">
+      <div class="stage" data-stage="fetch">
+        <div class="stage-title"><span>1</span> 取指 / 分配</div>
+        <div class="stage-body" id="fetchStage"></div>
+      </div>
+      <div class="stage" data-stage="rs">
+        <div class="stage-title"><span>2</span> 等待操作数</div>
+        <div class="stage-body" id="rsStage"></div>
+      </div>
+      <div class="stage" data-stage="execute">
+        <div class="stage-title"><span>3</span> 发射 / 执行</div>
+        <div class="stage-body" id="execStage"></div>
+      </div>
+      <div class="stage" data-stage="writeback">
+        <div class="stage-title"><span>4</span> 写回广播</div>
+        <div class="stage-body" id="wbStage"></div>
+      </div>
+      <div class="stage" data-stage="commit">
+        <div class="stage-title"><span>5</span> ROB 按序提交</div>
+        <div class="stage-body" id="commitStage"></div>
+      </div>
+      <div class="stage" data-stage="redirect">
+        <div class="stage-title"><span>6</span> 重定向 / 停顿</div>
+        <div class="stage-body" id="redirectStage"></div>
+      </div>
+    </section>
+
+    <section class="architecture">
+      <h2>当前周期微结构状态</h2>
+      <div class="diagram" id="diagram">
+        <div class="node pc">PC</div>
+        <div class="edge e1"></div>
+        <div class="node icache">I-Cache</div>
+        <div class="edge e2"></div>
+        <div class="node rename">Decode / Rename</div>
+        <div class="edge e3"></div>
+        <div class="node rs">Reservation Stations</div>
+        <div class="edge e4"></div>
+        <div class="node fu">ALU0 · ALU1 · LS · BR</div>
+        <div class="edge e5"></div>
+        <div class="node cdb">Writeback Bus</div>
+        <div class="edge e6"></div>
+        <div class="node rob">ROB Commit</div>
+        <div class="edge e7"></div>
+        <div class="node regfile">RegFile / Memory</div>
+      </div>
+    </section>
+
+    <section class="details">
+      <div class="panel">
+        <h2>Tag 生命周期</h2>
+        <div id="timeline" class="timeline"></div>
+      </div>
+      <div class="panel">
+        <h2>事件明细</h2>
+        <div id="eventList" class="event-list"></div>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

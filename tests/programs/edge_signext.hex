@@ -1,0 +1,8 @@
+# Immediate sign-extension boundaries.
+# 每行格式：机器码  # PC: 原始指令
+80000093  # 0x00000000: addi x1,x0,-2048
+7ff00113  # 0x00000004: addi x2,x0,2047
+fff10193  # 0x00000008: addi x3,x2,-1
+fff17213  # 0x0000000c: andi x4,x2,-1
+fff16293  # 0x00000010: ori x5,x2,-1
+00000073  # 0x00000014: ecall
